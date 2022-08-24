@@ -15,14 +15,9 @@ public class AppDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Request>()
-            .HasOne(req => req.StaticResponse)
+            .HasOne(req => req.Response)
             .WithOne(res => res.Request)
-            .HasForeignKey<StaticResponse>(req => req.RequestId);
-
-        modelBuilder.Entity<Request>()
-            .HasOne(req => req.FunctionResponse)
-            .WithOne(res => res.Request)
-            .HasForeignKey<FunctionResponse>(req => req.RequestId);
+            .HasForeignKey<Response>(req => req.RequestId);
 
         // modelBuilder.Entity<Request>()
         //     .Property(p => p.Headers)

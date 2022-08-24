@@ -20,11 +20,11 @@ public class ActionResultService : IActionResultService
         var user = await dbContext.Users
                         .Include(u => u.Workspaces.Where(w => w.Name == request.Workspace))
                         .ThenInclude(w => w.Requests.Where(req => req.Method == request.Method && req.Path == request.Path))
-                        .ThenInclude(r => r.StaticResponse)
+                        .ThenInclude(r => r.Response)
                         .Where(u => u.Username == request.Username)
                         .FirstOrDefaultAsync();
 
-        StaticResponse response = null;
+        Response response = null;
         if (user != null)
         {
             var workspace = user.Workspaces.FirstOrDefault();
@@ -34,7 +34,7 @@ public class ActionResultService : IActionResultService
                 {
                     if (request.ApiKey != workspace.ApiKey)
                     {
-                        response = new StaticResponse
+                        response = new Response
                         {
                             StatusCode = 401,
                             Body = "You are not allowed to access this api"
@@ -45,7 +45,7 @@ public class ActionResultService : IActionResultService
                 var req = workspace.Requests.FirstOrDefault();
                 if (req != null)
                 {
-                    response = req.StaticResponse;
+                    response = req.Response;
                 }
             }
         }

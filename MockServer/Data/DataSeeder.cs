@@ -21,8 +21,9 @@ public static class DataSeeder
                             Name = "Request1",
                             Method = "GET",
                             Path = "foo",
-                            StaticResponse = new StaticResponse
+                            Response = new Response
                             {
+                                Type = 0,
                                 StatusCode = 200,
                                 Body = "bar"
                             }
@@ -37,8 +38,9 @@ public static class DataSeeder
                             Name = "Request1",
                             Method = "GET",
                             Path = "foo",
-                            FunctionResponse = new FunctionResponse
+                            Response = new Response
                             {
+                                Type = 1,
                                 Framework = ".NET 6",
                                 File = "src.zip"
                             }

@@ -53,7 +53,6 @@ namespace MockServer.Data.Migrations
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Method = table.Column<string>(type: "TEXT", nullable: false),
                     Path = table.Column<string>(type: "TEXT", nullable: false),
-                    ResponseType = table.Column<int>(type: "INTEGER", nullable: false),
                     WorkspaceId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -68,52 +67,28 @@ namespace MockServer.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "FunctionResponse",
+                name: "Response",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Framework = table.Column<string>(type: "TEXT", nullable: false),
-                    File = table.Column<string>(type: "TEXT", nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    StatusCode = table.Column<int>(type: "INTEGER", nullable: true),
+                    Body = table.Column<string>(type: "TEXT", nullable: true),
+                    Framework = table.Column<string>(type: "TEXT", nullable: true),
+                    File = table.Column<string>(type: "TEXT", nullable: true),
                     RequestId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FunctionResponse", x => x.Id);
+                    table.PrimaryKey("PK_Response", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_FunctionResponse_Request_RequestId",
+                        name: "FK_Response_Request_RequestId",
                         column: x => x.RequestId,
                         principalTable: "Request",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateTable(
-                name: "StaticResponse",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    StatusCode = table.Column<int>(type: "INTEGER", nullable: false),
-                    Body = table.Column<string>(type: "TEXT", nullable: false),
-                    RequestId = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_StaticResponse", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_StaticResponse_Request_RequestId",
-                        column: x => x.RequestId,
-                        principalTable: "Request",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_FunctionResponse_RequestId",
-                table: "FunctionResponse",
-                column: "RequestId",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Request_WorkspaceId",
@@ -121,8 +96,8 @@ namespace MockServer.Data.Migrations
                 column: "WorkspaceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StaticResponse_RequestId",
-                table: "StaticResponse",
+                name: "IX_Response_RequestId",
+                table: "Response",
                 column: "RequestId",
                 unique: true);
 
@@ -135,10 +110,7 @@ namespace MockServer.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "FunctionResponse");
-
-            migrationBuilder.DropTable(
-                name: "StaticResponse");
+                name: "Response");
 
             migrationBuilder.DropTable(
                 name: "Request");

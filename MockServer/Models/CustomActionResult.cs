@@ -5,9 +5,9 @@ namespace MockServer.Models;
 
 public class CustomActionResult : IActionResult
 {
-    private readonly StaticResponse response;
+    private readonly Response response;
 
-    public CustomActionResult(StaticResponse response)
+    public CustomActionResult(Response response)
     {
         this.response = response;
     }
@@ -19,7 +19,7 @@ public class CustomActionResult : IActionResult
             await context.HttpContext.Response.WriteAsync("Request not found");
             return;
         }
-        context.HttpContext.Response.StatusCode = response.StatusCode;
+        context.HttpContext.Response.StatusCode = response.StatusCode ?? 404;
         if (!string.IsNullOrEmpty(response.Body))
         {
             await context.HttpContext.Response.WriteAsync(response.Body);
