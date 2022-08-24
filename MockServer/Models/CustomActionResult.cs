@@ -5,9 +5,9 @@ namespace MockServer.Models;
 
 public class CustomActionResult : IActionResult
 {
-    private readonly Response response;
+    private readonly StaticResponse response;
 
-    public CustomActionResult(Response response)
+    public CustomActionResult(StaticResponse response)
     {
         this.response = response;
     }

@@ -161,7 +161,7 @@ public class WorkspacesController : ControllerBase
         var user = await dbContext.Users
                             .Include(u => u.Workspaces.Where(w => w.Name == name))
                             .ThenInclude(w => w.Requests)
-                            .ThenInclude(r => r.Response)
+                            .ThenInclude(r => r.StaticResponse)
                             .Where(u => u.Username == username)
                             .FirstOrDefaultAsync();
 
@@ -184,8 +184,8 @@ public class WorkspacesController : ControllerBase
                     Path = req.Path,
                     Response = new GetWorkspaceRequestResponseModel
                     {
-                        StatusCode = req.Response.StatusCode,
-                        Body = req.Response.Body
+                        StatusCode = req.StaticResponse.StatusCode,
+                        Body = req.StaticResponse.Body
                     }
                 })
             .ToList();
@@ -207,7 +207,7 @@ public class WorkspacesController : ControllerBase
         var user = await dbContext.Users
                             .Include(u => u.Workspaces.Where(w => w.Name == name))
                             .ThenInclude(w => w.Requests.Where(r => r.Id == id))
-                            .ThenInclude(r => r.Response)
+                            .ThenInclude(r => r.StaticResponse)
                             .Where(u => u.Username == username)
                             .FirstOrDefaultAsync();
         if (user != null)
@@ -231,8 +231,8 @@ public class WorkspacesController : ControllerBase
                 request.Path,
                 Response = new
                 {
-                    request.Response.StatusCode,
-                    request.Response.Body
+                    request.StaticResponse.StatusCode,
+                    request.StaticResponse.Body
                 }
             });
         }
@@ -274,7 +274,7 @@ public class WorkspacesController : ControllerBase
                     Name = request.Name,
                     Method = request.Method,
                     Path = request.Path,
-                    Response = new Response
+                    StaticResponse = new StaticResponse
                     {
                         StatusCode = request.Response.StatusCode,
                         Body = request.Response.Body
@@ -290,8 +290,8 @@ public class WorkspacesController : ControllerBase
                     add.Path,
                     Response = new
                     {
-                        StatusCode = add.Response.StatusCode,
-                        Body = add.Response.Body
+                        StatusCode = add.StaticResponse.StatusCode,
+                        Body = add.StaticResponse.Body
                     }
                 });
             }

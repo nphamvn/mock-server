@@ -10,7 +10,7 @@ using MockServer.Data;
 namespace MockServer.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220824112324_Init")]
+    [Migration("20220824144047_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -18,7 +18,32 @@ namespace MockServer.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.8");
 
-            modelBuilder.Entity("MockServer.Models.Request", b =>
+            modelBuilder.Entity("MockServer.Entities.FunctionResponse", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("File")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Framework")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RequestId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RequestId")
+                        .IsUnique();
+
+                    b.ToTable("FunctionResponse");
+                });
+
+            modelBuilder.Entity("MockServer.Entities.Request", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -36,6 +61,9 @@ namespace MockServer.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("ResponseType")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("WorkspaceId")
                         .HasColumnType("INTEGER");
 
@@ -46,7 +74,7 @@ namespace MockServer.Data.Migrations
                     b.ToTable("Request");
                 });
 
-            modelBuilder.Entity("MockServer.Models.Response", b =>
+            modelBuilder.Entity("MockServer.Entities.StaticResponse", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -67,10 +95,10 @@ namespace MockServer.Data.Migrations
                     b.HasIndex("RequestId")
                         .IsUnique();
 
-                    b.ToTable("Response");
+                    b.ToTable("StaticResponse");
                 });
 
-            modelBuilder.Entity("MockServer.Models.User", b =>
+            modelBuilder.Entity("MockServer.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -85,7 +113,7 @@ namespace MockServer.Data.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("MockServer.Models.Workspace", b =>
+            modelBuilder.Entity("MockServer.Entities.Workspace", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -115,9 +143,20 @@ namespace MockServer.Data.Migrations
                     b.ToTable("Workspace");
                 });
 
-            modelBuilder.Entity("MockServer.Models.Request", b =>
+            modelBuilder.Entity("MockServer.Entities.FunctionResponse", b =>
                 {
-                    b.HasOne("MockServer.Models.Workspace", "Workspace")
+                    b.HasOne("MockServer.Entities.Request", "Request")
+                        .WithOne("FunctionResponse")
+                        .HasForeignKey("MockServer.Entities.FunctionResponse", "RequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Request");
+                });
+
+            modelBuilder.Entity("MockServer.Entities.Request", b =>
+                {
+                    b.HasOne("MockServer.Entities.Workspace", "Workspace")
                         .WithMany("Requests")
                         .HasForeignKey("WorkspaceId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -126,20 +165,20 @@ namespace MockServer.Data.Migrations
                     b.Navigation("Workspace");
                 });
 
-            modelBuilder.Entity("MockServer.Models.Response", b =>
+            modelBuilder.Entity("MockServer.Entities.StaticResponse", b =>
                 {
-                    b.HasOne("MockServer.Models.Request", "Request")
-                        .WithOne("Response")
-                        .HasForeignKey("MockServer.Models.Response", "RequestId")
+                    b.HasOne("MockServer.Entities.Request", "Request")
+                        .WithOne("StaticResponse")
+                        .HasForeignKey("MockServer.Entities.StaticResponse", "RequestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Request");
                 });
 
-            modelBuilder.Entity("MockServer.Models.Workspace", b =>
+            modelBuilder.Entity("MockServer.Entities.Workspace", b =>
                 {
-                    b.HasOne("MockServer.Models.User", "User")
+                    b.HasOne("MockServer.Entities.User", "User")
                         .WithMany("Workspaces")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -148,18 +187,19 @@ namespace MockServer.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MockServer.Models.Request", b =>
+            modelBuilder.Entity("MockServer.Entities.Request", b =>
                 {
-                    b.Navigation("Response")
-                        .IsRequired();
+                    b.Navigation("FunctionResponse");
+
+                    b.Navigation("StaticResponse");
                 });
 
-            modelBuilder.Entity("MockServer.Models.User", b =>
+            modelBuilder.Entity("MockServer.Entities.User", b =>
                 {
                     b.Navigation("Workspaces");
                 });
 
-            modelBuilder.Entity("MockServer.Models.Workspace", b =>
+            modelBuilder.Entity("MockServer.Entities.Workspace", b =>
                 {
                     b.Navigation("Requests");
                 });

@@ -53,6 +53,7 @@ namespace MockServer.Data.Migrations
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Method = table.Column<string>(type: "TEXT", nullable: false),
                     Path = table.Column<string>(type: "TEXT", nullable: false),
+                    ResponseType = table.Column<int>(type: "INTEGER", nullable: false),
                     WorkspaceId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -67,7 +68,28 @@ namespace MockServer.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Response",
+                name: "FunctionResponse",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Framework = table.Column<string>(type: "TEXT", nullable: false),
+                    File = table.Column<string>(type: "TEXT", nullable: false),
+                    RequestId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FunctionResponse", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FunctionResponse_Request_RequestId",
+                        column: x => x.RequestId,
+                        principalTable: "Request",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StaticResponse",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -78,9 +100,9 @@ namespace MockServer.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Response", x => x.Id);
+                    table.PrimaryKey("PK_StaticResponse", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Response_Request_RequestId",
+                        name: "FK_StaticResponse_Request_RequestId",
                         column: x => x.RequestId,
                         principalTable: "Request",
                         principalColumn: "Id",
@@ -88,13 +110,19 @@ namespace MockServer.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_FunctionResponse_RequestId",
+                table: "FunctionResponse",
+                column: "RequestId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Request_WorkspaceId",
                 table: "Request",
                 column: "WorkspaceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Response_RequestId",
-                table: "Response",
+                name: "IX_StaticResponse_RequestId",
+                table: "StaticResponse",
                 column: "RequestId",
                 unique: true);
 
@@ -107,7 +135,10 @@ namespace MockServer.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Response");
+                name: "FunctionResponse");
+
+            migrationBuilder.DropTable(
+                name: "StaticResponse");
 
             migrationBuilder.DropTable(
                 name: "Request");
